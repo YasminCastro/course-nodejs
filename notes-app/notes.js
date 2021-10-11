@@ -62,6 +62,11 @@ const listNotes = () => {
   for (var i = 0; i < notes.length; i++) {
     console.log(notes[i].title);
   }
+
+  /* notes.forEach((notes) =>{
+      console.log(notes.title)
+  })
+  */
 };
 
 module.exports = {
