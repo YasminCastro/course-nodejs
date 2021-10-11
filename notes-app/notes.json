@@ -1,1 +1,4 @@
-[{"title":"olá","body":"tudo bom"},{"title":"boa tarde","body":"oi"}]
+[
+  { "title": "olá", "body": "tudo bom" },
+  { "title": "curso", "body": "node" }
+]
