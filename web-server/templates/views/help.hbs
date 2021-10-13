@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/css/style.css" />
     <title>Help</title>
+      <link rel="icon" href="/images/icon-tab.png">
   </head>
   <body>
-   <header> {{>header}}</header>
+   <div class="main-content">{{>header}}
+       <p>{{helpText}} </p>
+    </div>
 
-    <p>{{helpText}} </p>
+   
 
-    <footer>{{>footer}} </footer>
+    {{>footer}}
   </body>
 </html>
