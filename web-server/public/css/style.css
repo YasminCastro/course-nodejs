@@ -1,6 +1,6 @@
 body {
   color: #333333;
-  font-family: Arial;
+  font-family: "Roboto", sans-serif;
   max-width: 650px;
   margin: 0 auto;
   padding: 0 16px;
@@ -41,4 +41,39 @@ h1 {
 
 .portrait {
   width: 360px;
+}
+
+button {
+  font-family: "Ubuntu", sans-serif;
+  height: 30px;
+  line-height: 1;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  border: 3px solid #93acb6;
+  background: #fff;
+  color: #93acb6;
+  border-radius: 40px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.35s;
+}
+
+button:hover {
+  background: #93acb6;
+  color: #fff;
+}
+
+input {
+  height: 30px;
+  border: 2px solid #93acb6;
+  border-radius: 2px;
+}
+
+#message-erro {
+  color: #ba3939;
+}
+
+#message-1 {
+  font-weight: 700;
 }

@@ -45,7 +45,7 @@ app.get("/help", (req, res) => {
 app.get("/weather", (req, res) => {
   if (!req.query.address) {
     return res.send({
-      error: "You must provide an address!",
+      error: "Você deve inserir um endereço!",
     });
   }
 
@@ -59,7 +59,7 @@ app.get("/weather", (req, res) => {
       forecast(latitude, longitude, (error, forecastData) => {
         try {
           res.send({
-            forecast: `A temperatura é de ${forecastData.temperature}°c, com sensação térmica de ${forecastData.feelslike}°c e o dia será ${forecastData.weatherDescription}`,
+            forecast: forecastData,
             location,
             address: req.query.address,
           });

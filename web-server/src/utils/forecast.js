@@ -5,6 +5,9 @@ const forecast = (latitude, longitude, callback) => {
   const url = `http://api.weatherstack.com/current?access_key=9d35a028587b06197804c8180334ab07&query=${latitude},${longitude}`;
 
   request({ url, json: true }, (error, { body }) => {
+    const weather_description =
+      body.current.weather_descriptions[0].toLowerCase();
+
     if (error) {
       callback("Unable to connect to weather service!", undefined);
     } else if (body.error) {
@@ -13,12 +16,13 @@ const forecast = (latitude, longitude, callback) => {
       callback(
         undefined,
 
-        " It is currently " +
+        " A temperatura é de " +
           body.current.temperature +
-          " degress out. I feels like" +
+          "°c, com sensação térmica de " +
           body.current.feelslike +
-          "and the weather description is " +
-          body.current.weather_descriptions[0]
+          "°c e o dia será " +
+          weather_description +
+          "."
       );
     }
   });
