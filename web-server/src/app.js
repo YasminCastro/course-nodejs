@@ -20,7 +20,7 @@ app.use(express.static(publicPath));
 //setup dinamic directory to serve
 app.get("", (req, res) => {
   res.render("index", {
-    title: "Weather",
+    title: "Home",
     name: " Yas",
   });
 });
@@ -35,15 +35,15 @@ app.get("/about", (req, res) => {
 app.get("/help", (req, res) => {
   res.render("help", {
     title: "Help",
-    helpText: "Texto de ajuda",
+    helpText: " ",
     name: " Yas",
   });
 });
 
 app.get("/weather", (req, res) => {
-  res.send({
-    forecast: "It is sunny",
-    location: "Goiânia",
+  res.render("weather", {
+    title: "Weather",
+    name: " Yas",
   });
 });
 
