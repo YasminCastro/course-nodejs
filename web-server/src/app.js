@@ -57,15 +57,15 @@ app.get("/weather", (req, res) => {
       }
 
       forecast(latitude, longitude, (error, forecastData) => {
-        if (error) {
+        try {
+          res.send({
+            forecast: `A temperatura é de ${forecastData.temperature}°c, com sensação térmica de ${forecastData.feelslike}°c e o dia será ${forecastData.weatherDescription}`,
+            location,
+            address: req.query.address,
+          });
+        } catch (error) {
           return res.send({ error });
         }
-
-        res.send({
-          forecast: forecastData,
-          location,
-          address: req.query.address,
-        });
       });
     }
   );
