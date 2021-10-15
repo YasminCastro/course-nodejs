@@ -31,3 +31,17 @@ const add = (x, y, callback) => {
 add(1, 4, (sum) => {
   console.log(`O resultado da soma é ${sum}`); // Should print: 5
 });
+
+//------------------------------------------------------------------//
+const doWorkCallback = (callback) => {
+  setTimeout(() => {
+    callback(undefined, [1, 4, 7]);
+  }, 2000);
+};
+
+doWorkCallback((error, result) => {
+  if (error) {
+    return console.log(error);
+  }
+  console.log(result);
+});
