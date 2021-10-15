@@ -6,6 +6,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/task-manager-api", {
   useCreateIndex: true,
 });
 
+//criando model
 const User = mongoose.model("User", {
   name: {
     type: String,
@@ -34,10 +35,13 @@ const User = mongoose.model("User", {
   },
 });
 
+//criando  info
 const me = new User({
   name: "   Andrew  ",
   email: "MYEMAIL@MEAD.IO   ",
 });
+
+//inserindo info
 
 me.save()
   .then(() => {
