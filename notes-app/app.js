@@ -63,7 +63,7 @@ yargs.command({
   describe: "Listando nota",
   handler() {
     console.log(chalk.white.inverse("Listando nota..."));
-    notes.listNote();
+    notes.listNotes();
   },
 });
 
