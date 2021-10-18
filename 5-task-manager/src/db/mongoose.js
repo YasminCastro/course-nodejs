@@ -33,40 +33,59 @@ const User = mongoose.model("User", {
       }
     },
   },
+  password: {
+    type: String,
+    required: true,
+    trim: true,
+    minlength: 7,
+    validate(value) {
+      if (value.toLowerCase().includes("password")) {
+        throw new Error("Password cannot contain password'");
+      }
+    },
+  },
+});
+
+const Task = mongoose.model("Task", {
+  description: {
+    type: String,
+    trim: true,
+    required: true,
+  },
+  completed: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 //criando  info
 const me = new User({
   name: "   Andrew  ",
   email: "MYEMAIL@MEAD.IO   ",
+  age: 29,
+  password: "1234567",
+});
+
+const task = new Task({
+  description: "Wash car",
+  completed: true,
 });
 
 //inserindo info
 
-me.save()
+// me.save()
+//   .then(() => {
+//     console.log(me);
+//   })
+//   .catch((error) => {
+//     console.log("Error!", error);
+//   });
+
+task
+  .save()
   .then(() => {
-    console.log(me);
+    console.log(task);
   })
   .catch((error) => {
-    console.log("Error!", error);
+    console.log(error);
   });
-
-const Task = mongoose.model("Task", {
-  description: {
-    type: String,
-  },
-  completed: {
-    type: Boolean,
-  },
-});
-
-// const task = new Task({
-//     description: 'Learn the Mongoose library',
-//     completed: false
-// })
-
-// task.save().then(() => {
-//     console.log(task)
-// }).catch((error) => {
-//     console.log(error)
-// })
