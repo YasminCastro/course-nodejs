@@ -18,6 +18,15 @@ app.post("/users", async (req, res) => {
   } catch (error) {
     res.status(400).send(error);
   }
+
+  // user
+  //   .save()
+  //   .then(() => {
+  //     res.status(201).send(user);
+  //   })
+  //   .catch((e) => {
+  //     res.status(400).send(e);
+  //   });
 });
 
 //fetch multiple users
@@ -28,6 +37,14 @@ app.get("/users", async (req, res) => {
   } catch (error) {
     res.status(500).send();
   }
+
+  // User.find({})
+  //   .then((users) => {
+  //     res.send(users);
+  //   })
+  //   .catch((e) => {
+  //     res.status(500).send();
+  //   });
 });
 
 //fetch users by id
@@ -45,45 +62,81 @@ app.get("/users/:id", async (req, res) => {
   } catch (error) {
     res.status(500).send();
   }
+
+  // if (_id.length != 24) {
+  //   return res.status(404).send();
+  // }
+
+  // User.findById(_id)
+  //   .then((user) => {
+  //     if (!user) {
+  //       return res.status(404).send();
+  //     }
+
+  //     res.send(user);
+  //   })
+  //   .catch((e) => {
+  //     res.status(500).send(e);
+  //   });
 });
 
 //route to create a new task
 app.post("/tasks", async (req, res) => {
   const task = new Task(req.body);
   try {
-    await task.save();
+    task.save();
     res.status(201).send(task);
   } catch (error) {
     res.status(400).send(error);
   }
+
+  // task
+  //   .save()
+  //   .then(() => {
+  //     res.status(201).send(task);
+  //   })
+  //   .catch((e) => {
+  //     res.status(400).send(e);
+  //   });
 });
 
 //fetching all tasks
 app.get("/tasks", async (req, res) => {
   try {
-    const tasks = await Task.find({});
-    res.send(tasks);
+    Task.find({});
+    res.send();
   } catch (error) {
     res.status(500).send();
   }
+
+  Task.find({})
+    .then((tasks) => {
+      res.send(tasks);
+    })
+    .catch((e) => {
+      res.status(500).send();
+    });
 });
 
 //fetching task by id
-app.get("/tasks/:id", async (req, res) => {
+app.get("/tasks/:id", (req, res) => {
   const _id = req.params.id;
 
-  try {
-    if (_id.length != 24) {
-      res.status(404).send();
-    }
-    const task = await Task.findById(_id);
-    if (!task) {
-      res.status(404).send();
-    }
-    res.send(task);
-  } catch (error) {
-    res.status(500).send();
+  if (_id.length != 24) {
+    res.status(404).send();
   }
+
+  Task.findById(_id)
+    .then((task) => {
+      if (!task) {
+        res.status(404).send();
+      }
+
+      res.send(task);
+    })
+    .catch((e) => {
+      res.status(500).send();
+    });
 });
 
 app.listen(port);
