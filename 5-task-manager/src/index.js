@@ -34,6 +34,10 @@ app.get("/users", async (req, res) => {
 app.get("/users/:id", async (req, res) => {
   const _id = req.params.id;
 
+  if (_id.length != 24) {
+    res.status(404).send();
+  }
+
   try {
     const user = await User.findById(_id);
 
@@ -44,6 +48,40 @@ app.get("/users/:id", async (req, res) => {
     res.send(user);
   } catch (error) {
     res.status(500).send();
+  }
+});
+
+//route to update user infos by id
+app.patch("/users/:id", async (req, res) => {
+  const _id = req.params.id;
+  //Se o usuario tentar alterar alguma informação que não existe ele irá receber um erro
+  const updates = Object.keys(req.body);
+  const allowUpdate = ["name", "email", "password", "age"];
+  const isValidOperation = updates.every((update) =>
+    allowUpdate.includes(update)
+  );
+
+  if (!isValidOperation) {
+    return res.status(400).send({ error: "Invalid Updates." });
+  }
+
+  if (_id.length != 24) {
+    res.status(404).send();
+  }
+
+  try {
+    const user = await User.findByIdAndUpdate(_id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!user) {
+      return res.status(404).send();
+    }
+
+    res.send(user);
+  } catch (error) {
+    res.status(400).send(error);
   }
 });
 
@@ -80,6 +118,40 @@ app.get("/tasks/:id", async (req, res) => {
     if (!task) {
       res.status(404).send();
     }
+    res.send(task);
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+
+//updating task by id
+app.patch("/tasks/:id", async (req, res) => {
+  const _id = req.params.id;
+
+  const updates = Object.keys(req.body);
+  const allowUpdate = ["description", "completed"];
+  const isValidOperation = updates.every((update) =>
+    allowUpdate.includes(update)
+  );
+
+  if (!isValidOperation) {
+    return res.status(400).send({ error: "Invalid Updates" });
+  }
+
+  if (_id.length != 24) {
+    res.status(404).send();
+  }
+
+  try {
+    const task = await Task.findByIdAndUpdate(_id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!task) {
+      res.status(404).send();
+    }
+
     res.send(task);
   } catch (error) {
     res.status(500).send();
