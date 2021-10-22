@@ -31,6 +31,20 @@ router.post("/users/login", async (req, res) => {
   }
 });
 
+//user logout
+router.post("/users/logout", auth, async (req, res) => {
+  try {
+    req.user.tokens = req.user.tokens.filter(() => {
+      return token.token !== req.token;
+    });
+
+    await req.user.save();
+    res.send();
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+
 //fetch multiple users
 // router.get("/users", auth, async (req, res) => {
 //   try {
