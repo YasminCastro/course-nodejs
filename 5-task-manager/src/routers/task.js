@@ -24,6 +24,10 @@ router.get("/tasks", auth, async (req, res) => {
     const tasks = await Task.find({ owner: req.user._id });
 
     res.send(tasks);
+
+    /* ---Alternativa---
+    await req.user.populate("tasks").execPopulate() 
+    res.send(req.user.tasks) */
   } catch (error) {
     res.status(500).send();
   }
@@ -51,9 +55,8 @@ router.get("/tasks/:id", auth, async (req, res) => {
 });
 
 //updating task by id
-router.patch("/tasks/:id", async (req, res) => {
+router.patch("/tasks/:id", auth, async (req, res) => {
   const _id = req.params.id;
-
   const updates = Object.keys(req.body);
   const allowUpdate = ["description", "completed"];
   const isValidOperation = updates.every((update) =>
@@ -64,20 +67,24 @@ router.patch("/tasks/:id", async (req, res) => {
     return res.status(400).send({ error: "Invalid Updates" });
   }
 
+  //condição para dar erro se o id estiver errado (com tamanho errado), sem ela cai no erro 500 e deve ser erro 404
   if (_id.length != 24) {
     res.status(404).send();
   }
 
   try {
-    const task = await Task.findById(req.params.id);
-
-    updates.forEach((update) => (task[update] = req.body[update]));
-
-    await task.save();
+    const task = await Task.findOne({
+      _id,
+      owner: req.user._id,
+    });
 
     if (!task) {
       res.status(404).send();
     }
+
+    updates.forEach((update) => (task[update] = req.body[update]));
+
+    await task.save();
 
     res.send(task);
   } catch (error) {
@@ -86,7 +93,7 @@ router.patch("/tasks/:id", async (req, res) => {
 });
 
 //deleting tasks by id
-router.delete("/tasks/:id", async (req, res) => {
+router.delete("/tasks/:id", auth, async (req, res) => {
   const _id = req.params.id;
 
   if (_id.length != 24) {
@@ -94,8 +101,7 @@ router.delete("/tasks/:id", async (req, res) => {
   }
 
   try {
-    const task = await Task.findByIdAndDelete(_id);
-
+    const task = await Task.findOneAndDelete({ _id, owner: req.user._id });
     if (!task) {
       res.status(404).send();
     }
