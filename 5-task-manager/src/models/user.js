@@ -51,6 +51,13 @@ const userSchema = new mongoose.Schema({
   ],
 });
 
+//allow to set a virtual atributes
+userSchema.virtual("tasks", {
+  ref: "Task",
+  localField: "_id",
+  foreignField: "owner",
+});
+
 //Public profile
 userSchema.methods.toJSON = function () {
   const user = this;

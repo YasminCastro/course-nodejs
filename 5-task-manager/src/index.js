@@ -18,3 +18,17 @@ app.use(userRouter);
 app.use(taskRouter);
 
 app.listen(port);
+
+// const Task = require("./models/task");
+// const User = require("./models/user");
+
+// const main = async () => {
+//   //   const task = await Task.findById("6176c5b232d2350a4067a2de");
+//   //   await task.populate("owner").execPopulate();
+//   //   console.log(task.owner);
+//   const user = await User.findById("6176c471939bf60b44d218c5");
+//   await user.populate("tasks").execPopulate();
+//   console.log(user.tasks);
+// };
+
+// main();

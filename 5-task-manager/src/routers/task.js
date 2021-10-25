@@ -1,10 +1,15 @@
 const express = require("express");
 const router = new express.Router();
 const Task = require("../models/task");
+const auth = require("../middleware/auth");
 
 //route to create a new task
-router.post("/tasks", async (req, res) => {
-  const task = new Task(req.body);
+router.post("/tasks", auth, async (req, res) => {
+  const task = new Task({
+    ...req.body,
+    owner: req.user._id,
+  });
+
   try {
     await task.save();
     res.status(201).send(task);
@@ -14,9 +19,10 @@ router.post("/tasks", async (req, res) => {
 });
 
 //fetching all tasks
-router.get("/tasks", async (req, res) => {
+router.get("/tasks", auth, async (req, res) => {
   try {
-    const tasks = await Task.find({});
+    const tasks = await Task.find({ owner: req.user._id });
+
     res.send(tasks);
   } catch (error) {
     res.status(500).send();
@@ -24,17 +30,20 @@ router.get("/tasks", async (req, res) => {
 });
 
 //fetching task by id
-router.get("/tasks/:id", async (req, res) => {
+router.get("/tasks/:id", auth, async (req, res) => {
   const _id = req.params.id;
 
   try {
     if (_id.length != 24) {
       res.status(404).send();
     }
-    const task = await Task.findById(_id);
+
+    const task = await Task.findOne({ _id, owner: req.user._id });
+
     if (!task) {
       res.status(404).send();
     }
+
     res.send(task);
   } catch (error) {
     res.status(500).send();
