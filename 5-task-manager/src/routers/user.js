@@ -6,10 +6,6 @@ const auth = require("../middleware/auth");
 
 const router = new express.Router();
 
-const upload = multer({
-  dest: "avatars",
-});
-
 //route to create a new user
 router.post("/users", async (req, res) => {
   const user = new User(req.body);
@@ -122,6 +118,11 @@ router.delete("/users/me", auth, async (req, res) => {
   } catch (e) {
     res.status(500).send();
   }
+});
+
+//path to the image
+const upload = multer({
+  dest: "avatars",
 });
 
 //avatar upload
