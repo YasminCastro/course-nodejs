@@ -7,7 +7,7 @@ const auth = async (req, res, next) => {
     //looking for the header that the user is supost to provide
     const token = req.header("Authorization").replace("Bearer ", "");
     //validating header
-    const decoded = jwt.verify(token, "thisismypayload");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     //finding associted user
     const user = await User.findOne({
       _id: decoded._id,
