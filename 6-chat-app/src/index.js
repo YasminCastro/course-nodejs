@@ -4,6 +4,11 @@ const http = require("http");
 const socketio = require("socket.io");
 const Filter = require("bad-words");
 
+const {
+  generateMessage,
+  generateLocationMessage,
+} = require("./utils/messages");
+
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
@@ -15,9 +20,16 @@ const publicPath = path.join(__dirname, "../public");
 app.use(express.static(publicPath));
 
 io.on("connection", (socket) => {
-  socket.emit("message", "Welcome!");
+  socket.on("join", ({ username, room }) => {
+    socket.join(room);
 
-  socket.broadcast.emit("message", "A new user has joined");
+    socket.emit("message", generateMessage("Welcome!"));
+
+    //emit the event to everyone in the room except de broadcaster
+    socket.broadcast
+      .to(room)
+      .emit("message", generateMessage(`${username} has joined.`));
+  });
 
   socket.on("sendMessage", (message, callback) => {
     //checking bad words in message
@@ -28,21 +40,18 @@ io.on("connection", (socket) => {
     }
 
     //emit the event to every single connection currently avaible
-    io.emit("message", message);
+    io.to("Central").emit("message", generateMessage(message));
     callback();
   });
 
   socket.on("sendLocation", (coords, callback) => {
-    io.emit(
-      "message",
-      `https://google.com/maps?q=${coords.latitude},${coords.longitude}`
-    );
+    io.emit("locationMessage", generateLocationMessage(coords));
 
     callback();
   });
 
   socket.on("disconnect", () => {
-    io.emit("message", "A user has left");
+    io.emit("message", generateMessage(`User has left`));
   });
 });
 
