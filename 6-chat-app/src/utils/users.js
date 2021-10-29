@@ -35,24 +35,17 @@ const removeUser = (id) => {
   const index = users.findIndex((user) => user.id === id);
 
   if (index !== -1) {
-    return users.splice(index, 1);
+    //removendo o index recebemos de volta um array do user removido, então vamos acessar a posição que ele está
+    return users.splice(index, 1)[0];
   }
 };
 
-addUser({
-  id: 11,
-  username: "Yas",
-  room: "Central",
-});
+const getUser = (id) => {
+  return users.find((user) => user.id === id);
+};
 
-console.log(users);
+const getUsersInRoom = (room) => {
+  return users.filter((user) => user.room === room);
+};
 
-const res = addUser({
-  id: 12,
-  username: "Yas",
-  room: "Central",
-});
-
-console.log(res);
-
-module.exports = { addUser };
+module.exports = { addUser, removeUser, getUser, getUsersInRoom };

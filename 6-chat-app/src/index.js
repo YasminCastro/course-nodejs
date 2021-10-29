@@ -9,6 +9,13 @@ const {
   generateLocationMessage,
 } = require("./utils/messages");
 
+const {
+  addUser,
+  removeUser,
+  getUser,
+  getUsersInRoom,
+} = require("./utils/users");
+
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
@@ -20,38 +27,67 @@ const publicPath = path.join(__dirname, "../public");
 app.use(express.static(publicPath));
 
 io.on("connection", (socket) => {
-  socket.on("join", ({ username, room }) => {
-    socket.join(room);
+  socket.on("join", ({ username, room }, callback) => {
+    const { error, user } = addUser({ id: socket.id, username, room });
 
-    socket.emit("message", generateMessage("Welcome!"));
+    const users = getUsersInRoom(user.room);
+
+    if (error) {
+      return callback(error);
+    }
+
+    socket.join(user.room);
+
+    socket.emit("message", generateMessage("Admin", "Welcome!"));
 
     //emit the event to everyone in the room except de broadcaster
     socket.broadcast
-      .to(room)
-      .emit("message", generateMessage(`${username} has joined.`));
+      .to(user.room)
+      .emit(
+        "message",
+        generateMessage("Admin", `${user.username} has joined.`)
+      );
+
+    callback();
   });
 
   socket.on("sendMessage", (message, callback) => {
     //checking bad words in message
     const filter = new Filter();
 
+    const user = getUser(socket.id);
+
     if (filter.isProfane(message)) {
       return callback("Profanity is not allowed.");
     }
 
     //emit the event to every single connection currently avaible
-    io.to("Central").emit("message", generateMessage(message));
+    io.to(user.room).emit("message", generateMessage(user.username, message));
     callback();
   });
 
   socket.on("sendLocation", (coords, callback) => {
-    io.emit("locationMessage", generateLocationMessage(coords));
+    const user = getUser(socket.id);
+
+    io.to(user.room).emit(
+      "locationMessage",
+      generateLocationMessage(user.username, coords)
+    );
 
     callback();
   });
 
   socket.on("disconnect", () => {
-    io.emit("message", generateMessage(`User has left`));
+    const user = removeUser(socket.id);
+
+    if (user) {
+      io.to(user.room).emit(
+        "message",
+        generateMessage("Admin", `${user.username} has left.`)
+      );
+
+      getUsersInRoom(user.room);
+    }
   });
 });
 
