@@ -11,11 +11,37 @@ const $messages = document.querySelector("#messages");
 //templates
 const messagesTemplate = document.querySelector("#message-template").innerHTML;
 const locationTemplate = document.querySelector("#location-template").innerHTML;
+const sidebarTemplate = document.querySelector("#sidebar-template").innerHTML;
 
 //options
 const { username, room } = Qs.parse(location.search, {
   ignoreQueryPrefix: true,
 });
+
+//mais complexo para dar uma experiencia melhor (quando o usuario for ler uma mensagem acima ele não vai ser "puxado para baixo")
+const autoscroll = () => {
+  //new message element
+  const $newMessage = $messages.lastElementChild;
+
+  //Height of the new message
+  const newMessageStyles = getComputedStyle($newMessage);
+  const newMessageMargin = parseInt(newMessageStyles.marginBottom);
+  const newMessageHeigh = $newMessage.offsetHeight + newMessageMargin;
+
+  //visible height
+  const visibleHeight = $messages.offsetHeight;
+
+  //Height of messages container
+  const containerHeight = $messages.scrollHeight;
+
+  //How far have i scrolled?
+  const scrollOffSet = $messages.scrollTop + visibleHeight;
+
+  if (containerHeight - newMessageHeigh <= scrollOffSet) {
+    //se quiser apenas scroll pro final da pagina
+    $messages.scrollTop = $messages.scrollHeight;
+  }
+};
 
 //listening to the event message
 socket.on("message", (messageInformation) => {
@@ -27,6 +53,8 @@ socket.on("message", (messageInformation) => {
   });
 
   $messages.insertAdjacentHTML("beforeend", html);
+
+  autoscroll();
 });
 
 //listening to the event locationMessage
@@ -41,6 +69,15 @@ socket.on("locationMessage", (messageInformation) => {
   });
 
   $messages.insertAdjacentHTML("beforeend", html);
+  autoscroll();
+});
+
+socket.on("roomData", ({ room, users }) => {
+  const html = Mustache.render(sidebarTemplate, {
+    room,
+    users,
+  });
+  document.querySelector("#sidebar").innerHTML = html;
 });
 
 //listening to the event submit from form
